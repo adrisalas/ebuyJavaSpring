@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es-ES" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>E-Buy Login</title>
+    <link rel="stylesheet" type="text/css" th:href="@{css/login.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
+</head>
+<body>
+<div class="nav">
+    <input type="checkbox" id="nav-check">
+    <div class="nav-header">
+        <div class="nav-title">
+            E-Buy
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="column">
+        <form class="login-form" method="post" th:action="@{/authentification}">
+            <h2 class="login-form__hdg">Iniciar sesión</h2>
+            <div class="login-form__field">
+                <div class="input-group">
+                    <input class="input-group__input" type="text" placeholder=" " autocomplete="off" id="emailOrNickname" name="emailOrNickname" th:value="${emailOrNickname}"/></td>
+                    <label class="input-group__label" for="emailOrNickname">Usuario</label>
+                </div>
+                <div class="input-group">
+                    <input class="input-group__input" type="password" placeholder=" " autocomplete="off" name="password" id="password"/></td>
+                    <label class="input-group__label" for="password">Contrase&ntilde;a</label>
+                </div>
+                <span style="color:red;" th:text="${loginStatus}"/>
+            </div>
+            <input class="login-btn" type="submit" value="Enviar"/>
+        </form>
+    </div>
+    <div class="column">
+        <form class="login-form" method="post" onsubmit="return checkSignIn(this);" th:action="@{/signin}">
+            <h2 class="login-form__hdg">Registrarse</h2>
+            <div class="login-form__field">
+                <div class="input-group">
+                    <input class="input-group__input" type="text" placeholder=" " autocomplete="off" id="nickname" name="nickname"/></td>
+                    <label class="input-group__label" for="nickname">Nickname</label>
+                </div>
+                <div class="input-group">
+                    <input class="input-group__input" type="text" placeholder=" " autocomplete="off" id="email1" name="email1"/></td>
+                    <label class="input-group__label" for="email1">Email</label>
+                </div>
+                <div class="input-group">
+                    <input class="input-group__input" type="text" placeholder=" " autocomplete="off" id="email2" name="email2"/></td>
+                    <label class="input-group__label" for="email2">Repite Email</label>
+                </div>
+                <div class="input-group">
+                    <input class="input-group__input" type="password" placeholder=" " autocomplete="off" id="password1" name="password1"/></td>
+                    <label class="input-group__label" for="password1">Contrase&ntilde;a</label>
+                </div>
+                <div class="input-group">
+                    <input class="input-group__input" type="password" placeholder=" " autocomplete="off" id="password2" name="password2"/></td>
+                    <label class="input-group__label" for="password2">Repite Contrase&ntilde;a</label>
+                </div>
+                <span style="color:red;" id="signinstatus" th:text="${signinstatus}"/>
+                <span style="color:#33A8FF;" id="signinstatusok" th:text="${signinstatusok}"/>
+            </div>
+            <input  class="login-btn" type="submit" value="Registrarse"/>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{js/login.js}"></script>
+</body>
+</html>
