@@ -1,0 +1,90 @@
+
+.button-crear {
+    background-color: #33A8FF; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 30px 50px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.button-eliminar {
+    background-color: red; /* Green */
+    border: none;
+    color: white;
+    padding: 1px 1px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 5px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: large;
+}
+
+.button-editar{
+    background-color: #FFE822; /* Green */
+    border: none;
+    color: white;
+    padding: 1px 1px;
+    width: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px 5px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: large;
+    align-content: center;
+
+}
+
+a{
+    color: white;
+}
+
+.button-filtrar{
+    background-color: #33A8FF; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: large;
+    font-weight: bold;
+    position: Absolute;
+    right:0px
+
+}
+
+.button-valorar{
+    background-color: #33A8FF; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: large;
+    font-weight: bold;
+    margin-top: 20px;
+    right:0px;
+}
