@@ -2,7 +2,9 @@ package com.example.ebuydb.controller;
 
 
 import com.example.ebuydb.dao.AccountRepository;
+import com.example.ebuydb.dao.ReviewRepository;
 import com.example.ebuydb.entity.Account;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,18 +13,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
+@AllArgsConstructor
 public class LoginController {
 
     private final AccountRepository accountRepository;
 
-    public LoginController(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
-
     @GetMapping
     public String index(Model model, HttpSession session){
+        Account account = (Account) session.getAttribute("user");
         if(session.getAttribute("user") != null){
-            return "pag2";
+            if(account.getIsadmin() == 1){
+                return "mock";
+            } else {
+                return "listadoProductos";
+            }
         }
         return "login";
     }
@@ -45,12 +49,12 @@ public class LoginController {
         } else {
             session.setAttribute("user", user);
 
-            if(user.getIsAdmin() == 0){
+            if(user.getIsadmin()== 0){
                 //TODO return userMenu
-                return "pag2";
+                return "mock";
             } else {
                 //TODO return adminMenu
-                return "pag2";
+                return "mock";
             }
         }
         request.setAttribute("loginStatus", loginStatus);
@@ -108,7 +112,7 @@ public class LoginController {
 
                     Account newUser = new Account();
                     newUser.setEmail(email1);
-                    newUser.setIsAdmin((short) 0);
+                    newUser.setIsadmin((short) 0);
                     newUser.setNickname(nickname);
                     newUser.setPassword(password1);
                     accountRepository.save(newUser);

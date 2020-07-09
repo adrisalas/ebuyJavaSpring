@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/productCard.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/botones.css}">
+</head>
+<body>
+
+<div class="nav" th:fragment="navbar">
+    <input type="checkbox" id="nav-check">
+    <div class="nav-header">
+        <div class="nav-title">
+            <span th:text="${session.user.nickname}" th:remove="tag">
+        </div>
+    </div>
+    <div th:switch="${session.user.isadmin}" th:remove="tag">
+        <div class="nav-links" th:case="1">
+            <a href="UsuariosListar"  >USUARIOS</a>
+            <a href="ProductosListar" style="background-color:white;color: black;">PRODUCTOS</a>
+            <a th:href="@{/signout}" >Cerrar Sesion</a>
+        </div>
+        <div class="nav-links" th:case="0">
+            <a href="ProductosListar" style="background-color:white;color: black;">BUSCAR PRODUCTOS</a>
+            <a href="MisProductos" >MIS PRODUCTOS</a>
+            <a href="ProductosHistorial" >HISTORIAL</a>
+            <a th:href="@{/signout}" >Cerrar Sesion</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,36 +1,44 @@
 package com.example.ebuydb.entity;
 
 import lombok.*;
+
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(onlyExplicitlyIncluded = true)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 public class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    private long id;
+    @Column(name = "USER_ID", nullable = false)
+    private int userId;
 
-    @Column(unique = true)
-    @NonNull @Size(min = 1, max = 20)
+    @Basic
+    @Column(name = "NICKNAME", nullable = false, length = 20)
     private String nickname;
 
-    @Column(unique = true)
-    @NonNull @Size(min = 1, max = 50)
+    @Basic
+    @Column(name = "EMAIL", nullable = false, length = 50)
     private String email;
 
-    @NonNull @Size(min = 1, max = 20)
+    @Basic
+    @Column(name = "PASSWORD", nullable = false, length = 20)
     private String password;
 
-    @NonNull private short isAdmin;
+    @Basic
+    @Column(name = "ISADMIN", nullable = false)
+    private short isadmin;
 
+    @OneToMany(mappedBy = "accountByVendorId")
+    private List<Product> productsByUserId;
+
+    @OneToMany(mappedBy = "accountByBuyerId")
+    private List<PurchasedProduct> purchasedProductsByUserId;
+
+    @OneToMany(mappedBy = "accountByUserId")
+    private List<Review> reviewsByUserId;
 }
-
