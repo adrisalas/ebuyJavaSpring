@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es-ES" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/productCard.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{adminMenu.css}">
+    <title>Admin Menu - E-Buy</title>
+</head>
+<body>
+<!-- BARRA NAVEGACION -->
+<div class="nav" th:replace="navbars.html :: navbar"></div>
+
+
+<br/>
+<table class="center" align="center" style="width:80%;overflow-y:auto;">
+    <tr>
+        <th>ID</th>
+        <th>NICKNAME</th>
+        <th>EMAIL</th>
+        <th>CONTRASEÑA</th>
+        <th></th>
+        <th>ADMIN</th>
+        <th>EDITAR</th>
+        <th>BORRAR</th>
+    </tr>
+    <tr th:each="cuenta : ${listaUsuarios}" align="center">
+        <td th:text="${cuenta.getUserId()}"></td>
+        <td th:text="${cuenta.getNickname()}"></td>
+        <td th:text="${cuenta.getEmail()}"></td>
+        <td th:text="${cuenta.getPassword()}"><td>
+        <td th:text="${cuenta.getIsadmin()}"></td>
+        <td><a th:href="@{/usuarioseditar(userId=${cuenta.getUserId()})}">Editar</a></td>
+        <td><a class="borrar" th:attr="onclick=|mostrarMensaje('${cuenta.getUserId()}','¿Desea borrar el usuario: '+'${cuenta.getNickname()}'+'?')|">Borrar</a></td>
+    </tr>
+</table>
+
+</body>
+<script th:inline="javascript">
+    var b = document.querySelector('.borrar'); //referencia al botom
+    function mostrarMensaje(id, msgText) {
+        var html = document.querySelector('html');
+        var panel = document.createElement('div');
+        panel.setAttribute('class', 'msgBox'); // le agregamos el atributo class="msgBox"
+        html.appendChild(panel);
+
+        var msg = document.createElement('p');
+        msg.textContent = msgText;
+        panel.appendChild(msg); //anida el elemento msg al panel
+
+        var boton = document.createElement('a');
+        var url = "";
+        /*[+
+        var url = [[@{/usuariosborrar}]];
+        +]*/
+        url+='?userId=' + id;
+        boton.href = url;
+        boton.textContent = "Confirmar";
+        panel.appendChild(boton); //anida el elemento msg al panel
+
+        var botonCancelar = document.createElement('a');
+        botonCancelar.textContent = "Cancelar";
+        botonCancelar.style.float = "right";
+        panel.appendChild(botonCancelar); //anida el elemento msg al panel
+        botonCancelar.onclick = function () {
+            panel.parentNode.removeChild(panel);
+        }
+        panel.style.backgroundColor = 'red';
+    }
+</script>
+</html>

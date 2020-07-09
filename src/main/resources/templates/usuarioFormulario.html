@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es-ES" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/productCard.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/botones.css}">
+    <title>MOCK NOT IMPLEMENTED</title>
+</head>
+<body>
+<!-- BARRA NAVEGACION -->
+<div class="nav" th:replace="navbars.html :: navbar"></div>
+
+<form th:action="@{/usuariosguardar}" method="POST" th:object="${cliente}">
+    <input type="hidden" name="userId" th:value="*{userId}" />
+    <table>
+        <tr>
+            <td>Nickname:</td>
+            <td><input type="text" name="nickname" th:value="*{nickname}" size="30" max="30" maxlength="30" /></td>
+        </tr>
+        <tr>
+            <td>Correo electr&oacute;nico:</td>
+            <td><input type="text" name="email" th:value="*{email}" size="30" max="30" maxlength="30" /></td>
+        </tr>
+        <tr>
+            <td>Contraseña:</td>
+            <td><input type="text" name="pwd" th:value="*{password}" size="25" max="25" maxlength="25" /></td>
+        </tr>
+        <tr>
+            <td>Admin:</td>
+<!--            <%-->
+<!--            if(Integer.parseInt(isAdmin) == 1){-->
+<!--            %>-->
+
+<!--            <td><input type="checkbox" id="isAdmin" name="isAdmin" value="<%= isAdmin %>" checked /></td>-->
+
+<!--            <%-->
+<!--            } else {-->
+<!--            %>-->
+
+            <td><input type="checkbox" id="isAdmin" name="isAdmin" th:value="*{isadmin}" th:checked="*{isadmin == 1}"/></td>
+
+        </tr>
+
+        <tr>
+            <td> <input type="submit" value="Confirmar"/></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

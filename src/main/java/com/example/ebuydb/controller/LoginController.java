@@ -5,12 +5,18 @@ import com.example.ebuydb.dao.AccountRepository;
 import com.example.ebuydb.dao.ReviewRepository;
 import com.example.ebuydb.entity.Account;
 import lombok.AllArgsConstructor;
+import org.bouncycastle.jcajce.provider.digest.SHA256;
+import org.bouncycastle.util.test.FixedSecureRandom;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 @Controller
 @AllArgsConstructor
@@ -23,7 +29,7 @@ public class LoginController {
         Account account = (Account) session.getAttribute("user");
         if(session.getAttribute("user") != null){
             if(account.getIsadmin() == 1){
-                return "mock";
+                return "listadoUsuarios";
             } else {
                 return "listadoProductos";
             }
@@ -42,6 +48,10 @@ public class LoginController {
             user = accountRepository.findByNickname(emailOrNickname);
         }
 
+        //TODO Crypto SHA256
+        com.example.ebuydb.crypto.Hash.printSHA256(password);
+
+
         if (user == null) {
             loginStatus = "El usuario no se encuentra en la base de datos";
         } else if (!password.equals(user.getPassword())) {
@@ -54,7 +64,7 @@ public class LoginController {
                 return "mock";
             } else {
                 //TODO return adminMenu
-                return "mock";
+                return "redirect:/usuarioslistar";
             }
         }
         request.setAttribute("loginStatus", loginStatus);
@@ -122,8 +132,8 @@ public class LoginController {
         return "login";
     }
 
-    @GetMapping("signout")
-    public String signOut(HttpSession session){
+    @GetMapping("logout")
+    public String logOut(HttpSession session){
         session.removeAttribute("user");
         return "redirect:/";
     }
