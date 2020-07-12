@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es-ES" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/productCard.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/botones.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/productMostrar.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/mensajes.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/valoracion.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/popup.css}">
+    <title>Producto - E-Buy</title>
+</head>
+<body>
+<!-- BARRA NAVEGACION -->
+<div class="nav" th:replace="navbars.html :: navbar"></div>
+
+<hr/>
+
+<div class="row">
+    <div class="column">
+        <h1 th:text="${product.getTitle()}"></h1>
+        <div class="product-tumb">
+            <img th:src="${product.getPhotoUrl()}" alt="">
+        </div>
+        <div class="product-details">
+                    <span class="product-catagory">
+                        CATEGORIA: <span th:text="${product.getSubcategoryBySubcategoryId().getCategoryByCategoryId().getName()}" th:remove="tag"/>
+                        <br/>
+                        SUBCATEGORIA: <span th:text="${product.getSubcategoryBySubcategoryId().getName()}" th:remove="tag"/>
+                        <br/>
+                        VENDEDOR: <span th:text="${product.getAccountByVendorId().getNickname()}" th:remove="tag"/>
+                        <br/>
+                        KEYWORDS:
+                        <div th:remove="tag" th:each="productKeyword: ${product.getProductKeywordsByProductId()}">
+                             <span th:text="${productKeyword.getKeywordByKeywordId().getName()}" th:remove="tag"/>
+                        </div>
+
+                    </span>
+            <p th:text="${product.getDescription()}"/>
+            <div class="product-bottom-details">
+                <div class="product-price" th:text="${product.getPrice() + '€'}"></div>
+                <br/>
+                <div class="product-links">
+                    <i th:text="${#dates.format(product.getCreationDate(),'dd-MM-yyyy')}"></i></a>
+                    <i th:text="${#dates.format(product.getCreationTime(),'HH:mm')}"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column" style="margin-top: 50px;">
+        <p> Quedan <b th:text="${product.getQuantity()}"></b> unidades de este producto.</p>
+
+        <form method="post" action="ProductosComprar" th:if="${session.user.isadmin != 1 && session.user.userId != product.getAccountByVendorId().getUserId()}">
+            <input type="hidden" id="product" name="productID" th:value="${product.getProductId()}"/>
+            <input type="number" id="quantity" name="quantity" required value=0 min="0" th:attr="max=${product.getQuantity()}"/>
+            <input class="button-comprar" type="submit" value="Comprar"/>
+        </form>
+        <p style="color:red;" id="statusComprar" th:text="${statusComprar}"/>
+        <p style="color:green;" id="statusComprarOK" th:text="${statusComprarOK}"/>
+
+        <div th:if="${listProductsSameVendor != null}" th:remove="tag">
+            <h2 style="padding-top: 50px;">Productos del mismo Vendedor: </h2>
+            <div th:each="p: ${listProductsSameVendor}" th:remove="tag">
+                <a th:href="@{/productomostrar(productId=${p.getProductId()})}" class="button-other" th:text="${p.getTitle()}"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr/>
+<br/>
+<h1> &nbsp; Valoraciones: </h1>
+
+<!-- LISTA PRODUCTOS -->
+<div th:if="${listadoValoraciones == null || listadoValoraciones.isEmpty()}" th:remove="tag">
+    <h2>Ahora mismo no hay valoraciones sobre este producto</h2>
+</div>
+<div th:unless="${listadoValoraciones == null || listadoValoraciones.isEmpty()}" th:remove="tag">
+
+    <h2 th:text="'&nbsp; &nbsp;Media valoraciones: ' + ${mediaValoraciones}"> </h2>
+    <table cellpadding="10" align="center" style="width:80%;height:150px;overflow-y:auto;">
+        <tbody>
+        <tr th:each="review : ${listadoValoraciones}" th:with="comentario=${review.getComment() == null ? '' : review.getComment()},valoracion=${review.getStars()}+''">
+            <td style="border: 2px solid black; border-spacing: 15px;">
+                <h4 style="text-align:right;" th:text="'Usuario: ' + ${review.getAccountByUserId().getNickname()} + '&emsp; Fecha: ' + ${#dates.format(review.getReviewDate(),'dd-MM-yyyy')}"/>
+                <hr/>
+                <form>
+                    <h2> Puntuacion:</h2>
+                    <fieldset class="rating" disabled>
+                        <input type="radio" th:checked="${valoracion.equals('5.0')}" th:id="'star5' + ${review.getReviewId()}" name="rating" value="5" /><label class = "full" th:for="'star5' + ${review.getReviewId()}"></label>
+                        <input type="radio" th:checked="${valoracion.equals('4.5')}" th:id="'star4half' + ${review.getReviewId()}" name="rating" value="4.5" /><label class="half" th:for="'star4half' + ${review.getReviewId()}"></label>
+                        <input type="radio" th:checked="${valoracion.equals('4.0')}" th:id="'star4' + ${review.getReviewId()}" name="rating" value="4" /><label class = "full" th:for="'star4' + ${review.getReviewId()}" ></label>
+                        <input type="radio" th:checked="${valoracion.equals('3.5')}" th:id="'star3half' + ${review.getReviewId()}" name="rating" value="3.5" /><label class="half" th:for="'star3half' + ${review.getReviewId()}"></label>
+                        <input type="radio" th:checked="${valoracion.equals('3.0')}" th:id="'star3' + ${review.getReviewId()}" name="rating" value="3" /><label class = "full" th:for="'star3' + ${review.getReviewId()}" ></label>
+                        <input type="radio" th:checked="${valoracion.equals('2.5')}" th:id="'star2half' + ${review.getReviewId()}" name="rating" value="2.5" /><label class="half" th:for="'star2half' + ${review.getReviewId()}"></label>
+                        <input type="radio" th:checked="${valoracion.equals('2.0')}" th:id="'star2' + ${review.getReviewId()}" name="rating" value="2" /><label class = "full" th:for="'star2' + ${review.getReviewId()}" ></label>
+                        <input type="radio" th:checked="${valoracion.equals('1.5')}" th:id="'star1half' + ${review.getReviewId()}" name="rating" value="1.5" /><label class="half" th:for="'star1half' + ${review.getReviewId()}" ></label>
+                        <input type="radio" th:checked="${valoracion.equals('1.0')}" th:id="'star1' + ${review.getReviewId()}" name="rating" value="1" /><label class = "full" th:for="'star1' + ${review.getReviewId()}"></label>
+                        <input type="radio" th:checked="${valoracion.equals('0.5')}"  th:id="'starhalf' + ${review.getReviewId()}" name="rating" value="0.5" /><label class="half" th:for="'starhalf' + ${review.getReviewId()}"></label>
+                    </fieldset>
+                    <br/>
+                    <br/>
+
+                    <h2> Comentario:</h2>
+                    <p th:if="${comentario.equals('')}" th:remove="tag" th:text="No hay comentario"/>
+                    <textarea th:unless="${comentario.equals('')}" disabled maxlength="510" name="comentario" th:text="${comentario}"/>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -76,9 +76,9 @@ a
     transition: 0.3s;
 }
 
-.product-details h4 a:hover {
+/*.product-details h4 a:hover {
     color: #fbb72c;
-}
+}*/
 
 .product-details p {
     font-size: 15px;

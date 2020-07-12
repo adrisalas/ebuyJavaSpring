@@ -30,7 +30,6 @@ public class UsuariosController {
 
         request.setAttribute("listaUsuarios", listaUsuarios);
 
-        //TODO go to template
         return "listadoUsuarios";
     }
 
@@ -52,7 +51,6 @@ public class UsuariosController {
         }
 
         request.setAttribute("cliente", cliente);
-        //TODO go to template
         return "usuarioFormulario";
     }
 
@@ -88,7 +86,7 @@ public class UsuariosController {
 
         String cliente_ID = request.getParameter("userId");
         if(cliente_ID != null) {
-            Account cliente = accountRepository.findByAccountId(new Integer(cliente_ID));
+            Account cliente = accountRepository.findByAccountId(Integer.parseInt(cliente_ID));
             if(cliente != null){
                 accountRepository.delete(cliente);
             }

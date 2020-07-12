@@ -29,9 +29,9 @@ public class LoginController {
         Account account = (Account) session.getAttribute("user");
         if(session.getAttribute("user") != null){
             if(account.getIsadmin() == 1){
-                return "listadoUsuarios";
+                return "redirect:/usuarioslistar";
             } else {
-                return "listadoProductos";
+                return "redirect:/productoslistar";
             }
         }
         return "login";
@@ -60,10 +60,8 @@ public class LoginController {
             session.setAttribute("user", user);
 
             if(user.getIsadmin()== 0){
-                //TODO return userMenu
-                return "mock";
+                return "redirect:/productoslistar";
             } else {
-                //TODO return adminMenu
                 return "redirect:/usuarioslistar";
             }
         }
@@ -79,8 +77,7 @@ public class LoginController {
                          @RequestParam(value = "password1") String password1,
                          @RequestParam(value = "password2") String password2,
                          HttpServletRequest request){
-        String signinstatus = "";
-        String signinstatusok = "";
+
         String emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
 
         request.setAttribute("nickname", nickname);
@@ -105,8 +102,7 @@ public class LoginController {
         } else {
             user = accountRepository.findByEmail(email1);
             if (user != null){
-                signinstatus = "ERROR. El email ya tiene una cuenta asociada.";
-                request.setAttribute("signinstatus", signinstatus);
+                request.setAttribute("signinstatus", "ERROR. El email ya tiene una cuenta asociada.");
             } else {
                 user = accountRepository.findByNickname(nickname);
                 if(user != null){

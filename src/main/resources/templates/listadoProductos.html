@@ -5,12 +5,65 @@
     <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
     <link rel="stylesheet" type="text/css" th:href="@{css/productCard.css}">
     <link rel="stylesheet" type="text/css" th:href="@{css/botones.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/grid.css}">
     <title>Productos - E-Buy</title>
 </head>
 <body>
 <!-- BARRA NAVEGACION -->
 <div class="nav" th:replace="navbars.html :: navbar"></div>
 
+<h1>FILTROS</h1>
+<!-- FILTROS -->
+<form th:action="@{/productoslistar}" method="get" >
+    <table align="center" >
+        <tr>
+            <td style="padding-left: 50px;">
+                CATEGORIA:
+                <select name="filtro_categoria">
+                    <option value="">--Todas--</option>
+                    <div th:remove="tag" th:each="category: ${listaCategorias}">
+                        <option th:selected="${category.getCategoryId().toString().equals(str_filtro_categoria)}" th:value="${category.getCategoryId()}" th:text="${category.getName()}"/>
+                    </div>
+                </select>
+                <br/>
+                PALABRAS CLAVE:
+                <select name="filtro_keyword">
+                    <option value="">--Todas--</option>
+                    <div th:remove="tag" th:each="keyword: ${listaKeywords}">
+                        <option th:selected="${keyword.getKeywordId().toString().equals(str_filtro_keywords)}" th:value="${keyword.getKeywordId()}" th:text="${keyword.getName()}"/>
+                    </div>
+                </select>
+            </td>
+            <td style="padding-left: 50px;">
+                Dia:
+                <input type="date" name="filtro_date" th:value="${str_filtro_date}"/>
+                <br/>
+                Hora:
+                <input type="time" name="filtro_time" th:value="${str_filtro_time}"/>
+            <td style="padding-left: 50px;">
+                Titulo: <input type="text" name="filtro_titulo" th:value="${str_filtro_titulo}" /> <br/>
+                Descripcion <input type="text" name="filtro_descripcion" th:value="${str_filtro_descripcion}" />
+            </td>
 
+            <br/>
+        </tr>
+    </table>
+    <br/>
+    <input  class="button-filtrar" type="submit" value="Filtrar"/>
+
+</form>
+<hr/>
+
+<!-- LISTA PRODUCTOS -->
+<div th:if="${listadoProductos == null || listadoProductos.isEmpty()}" th:remove="tag">
+    <h2>Ahora mismo no hay productos</h2>
+</div>
+<div th:unless="${listadoProductos == null || listadoProductos.isEmpty()}" th:remove="tag">
+    <div class="grid-container">
+        <div th:remove="tag" th:each="producto: ${listadoProductos}">
+            <div class="nav" th:replace="productCard.html :: product-card"/>
+        </div>
+    </div>
+</div>
 </body>
 </html>

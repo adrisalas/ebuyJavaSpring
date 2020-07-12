@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<div class="product-card" th:fragment="product-card">
+    <div class="badge"><a th:href="@{/productomostrar(productId=${producto.getProductId()})}">Ver Producto</a></div>
+    <div class="product-tumb">
+        <img th:src="${producto.getPhotoUrl()}" alt="">
+    </div>
+    <div class="product-details">
+                            <span class="product-catagory">
+                                CATEGORIA: <span th:text="${producto.getSubcategoryBySubcategoryId().getCategoryByCategoryId().getName()}" th:remove="tag"/>
+                                <br/>
+                                SUBCATEGORIA: <span th:text="${producto.getSubcategoryBySubcategoryId().getName()}" th:remove="tag"/>
+                                <br/>
+                                KEYWORDS:
+                                <div th:remove="tag" th:each="productKeyword: ${producto.getProductKeywordsByProductId()}">
+                                    <span th:text="${productKeyword.getKeywordByKeywordId().getName()}" th:remove="tag"/>
+                                </div>
+                            </span>
+        <h4><a th:href="@{/productomostrar(productId=${producto.getProductId()})}" th:text="${producto.getTitle()}"></a></h4>
+        <p th:if="${producto.getDescription().length() > 43}" th:text="${producto.getDescription().substring(0,40) + '...'}"/>
+        <p th:unless="${producto.getDescription().length() > 43}" th:text="${producto.getDescription()}"/>
+        <div class="product-bottom-details">
+            <div class="product-price" th:text="${producto.getPrice() + '€'}"></div>
+            <br/>
+            <div class="product-links">
+                <i th:text="${#dates.format(producto.getCreationDate(),'dd-MM-yyyy')}"></i></a>
+                <i th:text="${#dates.format(producto.getCreationTime(),'HH:mm')}"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

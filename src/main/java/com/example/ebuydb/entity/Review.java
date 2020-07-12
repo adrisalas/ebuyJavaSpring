@@ -1,9 +1,16 @@
 package com.example.ebuydb.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
