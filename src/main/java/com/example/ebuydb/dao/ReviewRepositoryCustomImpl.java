@@ -8,16 +8,12 @@ import java.util.List;
 
 public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
 
-//    @Autowired
-//    @Lazy
-//    AccountRepository accountRepository;
-
     @PersistenceContext
     private EntityManager em;
 
     @Override
     public double obtenerMediaValoraciones(int id) {
-        Query q = em.createQuery("SELECT AVG(r.stars) FROM Review r WHERE r.purchasedProductByPurchaseId.productByProductId.productId = :idProducto");
+        Query q = em.createQuery("SELECT AVG(r.stars) FROM Review r WHERE r.purchaseId.productByProductId.productId = :idProducto");
         q.setParameter("idProducto", id);
         List<Double> result = q.getResultList();
         List<Double> nullFirst = new ArrayList<>();

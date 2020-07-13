@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es-ES" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/productCard.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/botones.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/mensajes.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/valoracion.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/popup.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/grid.css}">
+    <title>Historial - E-Buy</title>
+</head>
+<body>
+<!-- BARRA NAVEGACION -->
+<div class="nav" th:replace="navbars.html :: navbar"></div>
+
+<div class="oaerror info" th:if="${listadoCompras == null || listadoCompras.isEmpty()}">
+    <strong>Historial vacío</strong> - Aún no se han realizado compras
+</div>
+<div th:unless="${listadoCompras == null || listadoCompras.isEmpty()}" th:remove="tag">
+    <div class="grid-container">
+        <div th:remove="tag" th:each="bought: ${listadoCompras}">
+            <div th:replace="productCard.html :: product-card-historial"/>
+        </div>
+    </div>
+    <div th:remove="tag" th:each="bought: ${listadoCompras}">
+        <div th:replace="productCard.html :: product-review-popup"/>
+    </div>
+
+</div>
+</body>
+</html>

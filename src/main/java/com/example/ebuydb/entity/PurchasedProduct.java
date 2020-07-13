@@ -47,6 +47,6 @@ public class PurchasedProduct {
     @JoinColumn(name = "BUYER_ID", referencedColumnName = "USER_ID", nullable = false)
     private Account accountByBuyerId;
 
-    @OneToMany(mappedBy = "purchasedProductByPurchaseId")
-    private List<Review> reviewsByPurchaseId;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "purchaseId")
+    private Review review;
 }

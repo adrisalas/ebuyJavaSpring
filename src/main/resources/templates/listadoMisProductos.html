@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es-ES" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{css/menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/productCard.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/botones.css}">
+    <title>Mis Productos - E-Buy</title>
+</head>
+<style>
+
+    .msgBox {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        width: 600px;
+        background-color: #ff9a9a;
+    }
+
+    .msgBox p {
+        line-height: 1.5;
+        padding: 10px 20px;
+        color: #333;
+        padding-left: 82px;
+        background-position: 25px center;
+        background-repeat: no-repeat;
+    }
+</style>
+<body>
+<!-- BARRA NAVEGACION -->
+<div class="nav" th:replace="navbars.html :: navbar"></div>
+
+<div class="button-crear">
+    <a href="ProductosCrear" >Crear Productos</a>
+</div>
+
+<!-- LISTA PRODUCTOS -->
+<div th:if="${listadoProductos == null || listadoProductos.isEmpty()}" th:remove="tag">
+    <h2>Ahora mismo no hay productos</h2>
+</div>
+<div th:unless="${listadoProductos == null || listadoProductos.isEmpty()}" th:remove="tag">
+    <div class="grid-container">
+        <div th:remove="tag" th:each="producto: ${listadoProductos}">
+            <div th:replace="productCard.html :: product-card-misproductos"/>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    var b = document.querySelector('.borrar'); //referencia al botom
+
+    function mostrarMensaje(id, msgText) {
+        var html = document.querySelector('html');
+
+        var panel = document.createElement('div');
+        panel.setAttribute('class', 'msgBox'); // le agregamos el atributo class="msgBox"
+        html.appendChild(panel);
+
+        var msg = document.createElement('p');
+        msg.textContent = msgText;
+        panel.appendChild(msg); //anida el elemento msg al panel
+
+        var boton = document.createElement('a');
+        var url = "";
+        /*[+
+        var url = [[@{/borrarproducto}]];
+        +]*/
+        url+='?productId=' + id;
+        boton.href = url;
+        boton.textContent = "Confirmar";
+        panel.appendChild(boton); //anida el elemento msg al panel
+
+        var botonCancelar = document.createElement('a');
+        botonCancelar.textContent = "Cancelar";
+        botonCancelar.style.float= "right";
+        panel.appendChild(botonCancelar); //anida el elemento msg al panel
+
+
+
+        botonCancelar.onclick = function () {
+            panel.parentNode.removeChild(panel);
+        }
+
+        panel.style.backgroundColor = 'red';
+
+    }
+
+</script>
+</body>
+</html>

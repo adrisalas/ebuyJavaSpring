@@ -1,7 +1,10 @@
 package com.example.ebuydb.controller;
 
 import com.example.ebuydb.entity.Product;
+import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 public class ProductoControllerUtils {
@@ -30,5 +33,19 @@ public class ProductoControllerUtils {
 
         }
         return productosFiltro;
+    }
+
+    public static void actualizarStatusComprar(HttpSession session, HttpServletRequest request){
+        String statusComprarOK = (String) session.getAttribute("statusComprarOK");
+        if(statusComprarOK != null && statusComprarOK != ""){
+            request.setAttribute("statusComprarOK",statusComprarOK);
+        }
+        session.removeAttribute("statusComprarOK");
+
+        String statusComprar = (String) session.getAttribute("statusComprar");
+        if(statusComprar != null && statusComprar != ""){
+            request.setAttribute("statusComprar",statusComprar);
+        }
+        session.removeAttribute("statusComprar");
     }
 }

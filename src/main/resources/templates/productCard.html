@@ -34,5 +34,111 @@
     </div>
 </div>
 
+<div class="product-card" th:fragment="product-card-misproductos">
+    <div class="badge"><a th:href="@{/productomostrar(productId=${producto.getProductId()})}">Ver Producto</a></div>
+    <div class="product-tumb">
+        <img th:src="${producto.getPhotoUrl()}" alt="">
+    </div>
+    <div class="product-details">
+                            <span class="product-catagory">
+                                CATEGORIA: <span th:text="${producto.getSubcategoryBySubcategoryId().getCategoryByCategoryId().getName()}" th:remove="tag"/>
+                                <br/>
+                                SUBCATEGORIA: <span th:text="${producto.getSubcategoryBySubcategoryId().getName()}" th:remove="tag"/>
+                                <br/>
+                                KEYWORDS:
+                                <div th:remove="tag" th:each="productKeyword: ${producto.getProductKeywordsByProductId()}">
+                                    <span th:text="${productKeyword.getKeywordByKeywordId().getName()}" th:remove="tag"/>
+                                </div>
+                            </span>
+        <h4><a th:href="@{/productomostrar(productId=${producto.getProductId()})}" th:text="${producto.getTitle()}"></a></h4>
+        <p th:if="${producto.getDescription().length() > 43}" th:text="${producto.getDescription().substring(0,40) + '...'}"/>
+        <p th:unless="${producto.getDescription().length() > 43}" th:text="${producto.getDescription()}"/>
+        <div class="product-bottom-details">
+            <div class="product-price" th:text="${producto.getPrice() + '€'}"></div>
+            <br/>
+            <div class="product-links">
+                <i th:text="${#dates.format(producto.getCreationDate(),'dd-MM-yyyy')}"></i></a>
+                <i th:text="${#dates.format(producto.getCreationTime(),'HH:mm')}"></i></a>
+            </div>
+            <div class="button-editar">
+                <a th:href="@{/editarproducto(productId=${producto.getProductId()})}" th:text="Editar"/>
+            </div>
+            <div class="button-eliminar">
+                <a class="borrar" th:attr="onclick=|mostrarMensaje('${producto.getProductId()}','¿Desea borrar el producto: '+'${producto.getTitle()}'+'?')|">Borrar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="product-card" th:fragment="product-card-historial">
+    <div class="badge"><a th:href="@{/productomostrar(productId=${bought.getProductByProductId().getProductId()})}">Ver Producto</a></div>
+    <div class="valoracion" ><a th:href="${'#popup' + bought.getPurchaseId()}">Ver Valoracion</a></div>
+    <div class="product-tumb">
+        <img th:src="${bought.getProductByProductId().getPhotoUrl()}" alt="">
+    </div>
+    <div class="product-details">
+                                <span class="product-catagory">
+                                CATEGORIA: <span th:text="${bought.getProductByProductId().getSubcategoryBySubcategoryId().getCategoryByCategoryId().getName()}" th:remove="tag"/>
+                                <br/>
+                                SUBCATEGORIA: <span th:text="${bought.getProductByProductId().getSubcategoryBySubcategoryId().getName()}" th:remove="tag"/>
+                                <br/>
+                                KEYWORDS:
+                                <div th:remove="tag" th:each="productKeyword: ${bought.getProductByProductId().getProductKeywordsByProductId()}">
+                                    <span th:text="${productKeyword.getKeywordByKeywordId().getName()}" th:remove="tag"/>
+                                </div>
+                            </span>
+        <h4><a th:href="@{/productomostrar(productId=${bought.getProductByProductId().getProductId()})}" th:text="${bought.getProductByProductId().getTitle()}"></a></h4>
+        <p th:if="${bought.getProductByProductId().getDescription().length() > 43}" th:text="${bought.getProductByProductId().getDescription().substring(0,40) + '...'}"/>
+        <p th:unless="${bought.getProductByProductId().getDescription().length() > 43}" th:text="${bought.getProductByProductId().getDescription()}"/>
+
+        <div class="final-detalles">
+
+            <div class="detalles-compra">
+                <div  class="texto">  Detalles de la compra</div><br/>
+                Precio: <span th:remove="tag" th:text="${bought.getPrice()}"/>€
+                <br/>Fecha: <span th:remove="tag" th:text="${#dates.format(bought.getPurchaseDate(),'dd-MM-yyyy')}"/>
+                <br/>Cantidad: <span th:remove="tag" th:text="${bought.getQuantity()}"/></div>
+        </div>
+    </div>
+</div>
+
+<div th:id="${'popup' + bought.getPurchaseId()}" class="overlay" th:fragment="product-review-popup">
+    <div class="popup">
+
+        <h1 th:text="${bought.getProductByProductId().getTitle() + ' | ' + #dates.format(bought.getPurchaseDate(),'dd-MM-yyyy')}"/>
+
+        <a class="close" href="#">&times;</a>
+        <div class="content">
+            <form th:action="@{/guardarvaloracion}" method="post">
+                <input type="hidden" name="compraId" th:value="${bought.getPurchaseId()}" />
+                <input type="hidden" name="reviewId" th:value="${bought.getReview() == null ? 0 : bought.getReview().getReviewId()}"/>
+                <h2> Puntuacion:</h2>
+                <div th:with="review=${bought.getReview()}" th:remove="tag">
+                    <div th:with="comentario=${review == null || review.getComment() == null ? '' : review.getComment()},valoracion=${review == null ? '0.5' : review.getStars()+''}" th:remove="tag">
+                        <fieldset class="rating" th:fragment="product-review-starts">
+                            <input type="radio" th:checked="${valoracion.equals('5.0')}" th:id="'star5' + ${bought.getPurchaseId()}" name="rating" value="5" /><label class = "full" th:for="'star5' + ${bought.getPurchaseId()}"></label>
+                            <input type="radio" th:checked="${valoracion.equals('4.5')}" th:id="'star4half' + ${bought.getPurchaseId()}" name="rating" value="4.5" /><label class="half" th:for="'star4half' + ${bought.getPurchaseId()}"></label>
+                            <input type="radio" th:checked="${valoracion.equals('4.0')}" th:id="'star4' + ${bought.getPurchaseId()}" name="rating" value="4" /><label class = "full" th:for="'star4' + ${bought.getPurchaseId()}" ></label>
+                            <input type="radio" th:checked="${valoracion.equals('3.5')}" th:id="'star3half' + ${bought.getPurchaseId()}" name="rating" value="3.5" /><label class="half" th:for="'star3half' + ${bought.getPurchaseId()}"></label>
+                            <input type="radio" th:checked="${valoracion.equals('3.0')}" th:id="'star3' + ${bought.getPurchaseId()}" name="rating" value="3" /><label class = "full" th:for="'star3' + ${bought.getPurchaseId()}" ></label>
+                            <input type="radio" th:checked="${valoracion.equals('2.5')}" th:id="'star2half' + ${bought.getPurchaseId()}" name="rating" value="2.5" /><label class="half" th:for="'star2half' + ${bought.getPurchaseId()}"></label>
+                            <input type="radio" th:checked="${valoracion.equals('2.0')}" th:id="'star2' + ${bought.getPurchaseId()}" name="rating" value="2" /><label class = "full" th:for="'star2' + ${bought.getPurchaseId()}" ></label>
+                            <input type="radio" th:checked="${valoracion.equals('1.5')}" th:id="'star1half' + ${bought.getPurchaseId()}" name="rating" value="1.5" /><label class="half" th:for="'star1half' + ${bought.getPurchaseId()}" ></label>
+                            <input type="radio" th:checked="${valoracion.equals('1.0')}" th:id="'star1' + ${bought.getPurchaseId()}" name="rating" value="1" /><label class = "full" th:for="'star1' + ${bought.getPurchaseId()}"></label>
+                            <input type="radio" th:checked="${valoracion.equals('0.5')}"  th:id="'starhalf' + ${bought.getPurchaseId()}" name="rating" value="0.5" /><label class="half" th:for="'starhalf' + ${bought.getPurchaseId()}"></label>
+                        </fieldset>
+                        <br/>
+                        <br/>
+                        <hr/>
+                        <h2> Comentario:</h2>
+                        <textarea placeholder="Opcional" maxlength="510" name="comentario" th:value="${comentario}" th:text="${comentario}"/>
+                        <input th:if="${review == null}" class="button-valorar" type="submit" name="Enviar" value="Enviar valoracion"/>
+                        <input th:unless="${review == null}" class="button-valorar" type="submit" name="Enviar" value="Modificar valoracion"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -37,9 +37,9 @@ public class Review {
     @Column(name = "COMMENT", nullable = true, length = 510)
     private String comment;
 
-    @ManyToOne
-    @JoinColumn(name = "PURCHASE_ID", referencedColumnName = "PURCHASE_ID", nullable = false)
-    private PurchasedProduct purchasedProductByPurchaseId;
+    @JoinColumn(name = "PURCHASE_ID", referencedColumnName = "PURCHASE_ID")
+    @OneToOne(optional = false)
+    private PurchasedProduct purchaseId;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)

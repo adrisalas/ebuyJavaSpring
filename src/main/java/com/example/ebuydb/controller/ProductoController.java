@@ -1,17 +1,17 @@
 package com.example.ebuydb.controller;
 
-import com.example.ebuydb.dao.CategoryRepository;
-import com.example.ebuydb.dao.KeywordRepository;
-import com.example.ebuydb.dao.ProductRepository;
-import com.example.ebuydb.dao.ReviewRepository;
+import com.example.ebuydb.dao.*;
 import com.example.ebuydb.entity.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -22,8 +22,10 @@ public class ProductoController {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final SubcategoryRepository subcategoryRepository;
     private final KeywordRepository keywordRepository;
     private final ReviewRepository reviewRepository;
+    private final PurchaseProductRepository purchaseProductRepository;
 
     @GetMapping("/productoslistar")
     public String productosListar(HttpSession session, HttpServletRequest request) {
@@ -145,6 +147,7 @@ public class ProductoController {
 
         try{
             int productId = Integer.parseInt(request.getParameter("productId"));
+            ProductoControllerUtils.actualizarStatusComprar(session, request);
 
             Product product = productRepository.findById(productId).get();
             request.setAttribute("product", product);
@@ -169,8 +172,248 @@ public class ProductoController {
 
     }
 
+    @PostMapping("/productocomprar")
+    public String productoComprar(HttpSession session, HttpServletRequest request, Model model){
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null) {
+            return "redirect:/";
+        }
+
+        Integer productId = Integer.valueOf(request.getParameter("productId"));
+        Integer quantity = Integer.valueOf(request.getParameter("quantity"));
+        Product product = productRepository.findById(productId).get();
+        if(product.getQuantity() >= quantity && quantity != 0){
+            product.setQuantity(product.getQuantity() - quantity);
+            productRepository.save(product);
+
+            PurchasedProduct pp = new PurchasedProduct();
+            pp.setAccountByBuyerId(usuario);
+            pp.setPrice(product.getPrice());
+            pp.setProductByProductId(product);
+            pp.setPurchaseDate(new java.sql.Date((System.currentTimeMillis())));
+            pp.setQuantity(quantity);
+            purchaseProductRepository.save(pp);
+            session.setAttribute("statusComprarOK","Compradas " + quantity + " unidades");
+        } else {
+            session.setAttribute("statusComprar", "ERROR AL COMPRAR");
+        }
+        return "redirect:/productomostrar?productId=" + product.getProductId();
+    }
+
+    @GetMapping("/misproductos")
+    public String misProductos(HttpSession session, HttpServletRequest request){
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null || usuario.getIsadmin() == 1) {
+            return "redirect:/";
+        }
+
+        List<Product> listadoProductos = productRepository.findByVendorId(usuario.getUserId());
+        request.setAttribute("listadoProductos", listadoProductos);
+
+        return "listadoMisProductos";
+    }
+
+    @GetMapping("/crearproducto")
+    public String crearProducto(HttpSession session, HttpServletRequest request){
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null || usuario.getIsadmin() == 1) {
+            return "redirect:/";
+        }
+        List<Subcategory> listSubcategory = subcategoryRepository.findAll();
+        List<Category> listCategory = categoryRepository.findAll();
+        List<Keyword> listKeyword = keywordRepository.findAll();
+        request.setAttribute("listCategory",listCategory);
+        request.setAttribute("listSubcategory", listSubcategory);
+        request.setAttribute("listKeyword",listKeyword);
+        return "producto";
+    }
+
+    @GetMapping("/editarproducto")
+    public String editarProducto(HttpSession session, HttpServletRequest request){
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null || usuario.getIsadmin() == 1) {
+            return "redirect:/";
+        }
+        String productoId = request.getParameter("productoId");
+
+        if(productoId == null || productoId == ""){
+            return "redirect/misproductos";
+        }
+
+        Product producto = productRepository.findById(Integer.valueOf(productoId)).get();
+        List<Subcategory> listSubcategory = subcategoryRepository.findAll();
+        List<Category> listCategory = categoryRepository.findAll();
+        List<Keyword> listKeyword = keywordRepository.findAll();
+
+
+        request.setAttribute("listCategory",listCategory);
+        request.setAttribute("listSubcategory", listSubcategory);
+        request.setAttribute("listKeyword",listKeyword);
+        request.setAttribute("producto", producto);
+
+        return "producto";
+    }
+
+    @GetMapping("/borrarproducto")
+    public String borrarProducto(HttpSession session, HttpServletRequest request) {
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null) {
+            return "redirect:/";
+        }
+        String productId = request.getParameter("productId");
+        if (productId != null && !productId.equals("")) {
+            Product p = productRepository.getOne(Integer.valueOf(productId));
+            for(PurchasedProduct pp : p.getPurchasedProductsByProductId()){
+                reviewRepository.delete(pp.getReview());
+                purchaseProductRepository.delete(pp);
+            }
+            productRepository.delete(p);
+        }
+        return "redirect:/misproductos";
+    }
+
+    @PostMapping("/guardarproducto")
+    public String guardarProducto(HttpSession session, HttpServletRequest request) throws UnsupportedEncodingException {
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null || usuario.getIsadmin() == 1) {
+            return "redirect:/";
+        }
+
+        Product product;
+
+        String productoId = request.getParameter("productId");
+        if (productoId == null || productoId.isEmpty()) {
+            product = new Product();
+        } else {
+            product = productRepository.findById(Integer.valueOf(productoId)).get();
+        }
+
+        String titulo = new String(request.getParameter("title").getBytes("ISO-8859-1"), "UTF8");
+        String descripcion = new String(request.getParameter("description").getBytes("ISO-8859-1"), "UTF8");
+        String precio = new String(request.getParameter("price").getBytes("ISO-8859-1"), "UTF8");
+        String foto = new String(request.getParameter("urlPhoto").getBytes("ISO-8859-1"), "UTF8");
+        String cantidad = new String(request.getParameter("quantity").getBytes("ISO-8859-1"), "UTF8");
+        String subcategoria = new String(request.getParameter("subcategoria").getBytes("ISO-8859-1"), "UTF8");
+        String[] keywords = new String(request.getParameter("listaOculta").getBytes("ISO-8859-1"), "UTF8").split(",");
+        List<String> keywordList = keywordRepository.findAllName();
+        List<Keyword> keyWords = new ArrayList<>();
+
+        for (String words : keywords) {
+            Keyword key;
+            if (!keywordList.contains(words)) {
+                key = new Keyword();
+                key.setName(words);
+                keywordRepository.save(key);
+            } else {
+                key = keywordRepository.findByName(words).get(0);
+            }
+
+            keyWords.add(key);
+
+        }
+
+        List<ProductKeyword> productKeywords = new ArrayList<>();
+        for(Keyword k : keyWords){
+            ProductKeyword pk = new ProductKeyword();
+            pk.setKeywordByKeywordId(k);
+            pk.setProductByProductId(product);
+            productKeywords.add(pk);
+        }
+        product.setProductKeywordsByProductId(productKeywords);
+        product.setTitle(titulo);
+        product.setDescription(descripcion);
+        product.setPrice(Double.parseDouble(precio));
+        product.setPhotoUrl(foto);
+        product.setQuantity(Integer.parseInt(cantidad));
+        product.setSubcategoryBySubcategoryId(subcategoryRepository.getOne(Integer.parseInt(subcategoria)));
+        product.setAccountByVendorId(usuario);
+
+        long millis = System.currentTimeMillis();
+
+        java.sql.Date date = new java.sql.Date(millis);
+        java.sql.Time tiempo = new java.sql.Time(millis);
+        product.setCreationDate(date);
+        java.util.Date time = tiempo;
+        String hora = new SimpleDateFormat("HH:mm").format(time);
+        hora += ":00";
+        try {
+            product.setCreationTime((Time) new SimpleDateFormat("HH:mm:ss").parse(hora));
+        } catch (ParseException ex) {
+            //TODO log
+        }
+
+        productRepository.save(product);
+
+        return "redirect:/misproductos";
+    }
+
+    @GetMapping("/historial")
+    public String historialProductos(HttpSession session, HttpServletRequest request){
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null || usuario.getIsadmin() == 1) {
+            return "redirect:/";
+        }
+
+        List<PurchasedProduct> listadoCompras = purchaseProductRepository.findByBuyerId(usuario.getUserId());
+        request.setAttribute("listadoCompras",listadoCompras);
+        return "historial";
+    }
 
 
 
+    @PostMapping("guardarvaloracion")
+    public String guardarValoracion(HttpSession session, HttpServletRequest request) throws UnsupportedEncodingException {
+
+        Account usuario = (Account) session.getAttribute("user");
+
+        if (usuario == null || usuario.getIsadmin() == 1) {
+            return "redirect:/";
+        }
+        Review review;
+        boolean esCrearNuevo = false;
+
+        String reviewId = request.getParameter("reviewId");
+        if (reviewId == null || reviewId.isEmpty() || reviewId.equals("0")) {
+            review = new Review();
+            esCrearNuevo = true;
+        } else {
+            review = reviewRepository.findById(Integer.valueOf(reviewId)).get();
+        }
+
+        String compraId = request.getParameter("compraId");
+        PurchasedProduct compra = purchaseProductRepository.findById(Integer.valueOf(compraId)).get();
+        review.setPurchaseId(compra);
+
+        String comentario = new String(request.getParameter("comentario").getBytes("ISO-8859-1"),"UTF8");
+        review.setComment(comentario);
+
+        String rating =request.getParameter("rating");
+        if(rating == null || rating.isEmpty() || rating.equalsIgnoreCase("")){
+            rating = "0.0";
+        }
+        review.setStars(Double.valueOf(rating));
+
+        review.setAccountByUserId(usuario);
+
+        long millis=System.currentTimeMillis();
+        java.sql.Date date = new java.sql.Date(millis);
+        review.setReviewDate(date);
+
+
+        reviewRepository.save(review);
+        if (esCrearNuevo) {
+            compra.setReview(review);
+            purchaseProductRepository.save(compra);
+        }
+
+        return "redirect:/historial";
+    }
 
 }

@@ -51,8 +51,8 @@
     <div class="column" style="margin-top: 50px;">
         <p> Quedan <b th:text="${product.getQuantity()}"></b> unidades de este producto.</p>
 
-        <form method="post" action="ProductosComprar" th:if="${session.user.isadmin != 1 && session.user.userId != product.getAccountByVendorId().getUserId()}">
-            <input type="hidden" id="product" name="productID" th:value="${product.getProductId()}"/>
+        <form method="post" th:action="@{/productocomprar}" th:if="${session.user.isadmin != 1 && session.user.userId != product.getAccountByVendorId().getUserId()}">
+            <input type="hidden" id="productId" name="productId" th:value="${product.getProductId()}"/>
             <input type="number" id="quantity" name="quantity" required value=0 min="0" th:attr="max=${product.getQuantity()}"/>
             <input class="button-comprar" type="submit" value="Comprar"/>
         </form>
