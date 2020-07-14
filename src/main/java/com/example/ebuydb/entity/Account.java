@@ -26,7 +26,7 @@ public class Account {
     private String email;
 
     @Basic
-    @Column(name = "PASSWORD", nullable = false, length = 20)
+    @Column(name = "PASSWORD", nullable = false, length = 64)
     private String password;
 
     @Basic

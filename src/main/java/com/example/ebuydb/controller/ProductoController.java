@@ -1,6 +1,7 @@
 package com.example.ebuydb.controller;
 
 import com.example.ebuydb.dao.*;
+import com.example.ebuydb.dto.AccountSessionDTO;
 import com.example.ebuydb.entity.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,7 @@ public class ProductoController {
     @GetMapping("/productoslistar")
     public String productosListar(HttpSession session, HttpServletRequest request) {
 
-        Account usuario = (Account) session.getAttribute("user");
+        AccountSessionDTO usuario = (AccountSessionDTO) session.getAttribute("user");
 
         if (usuario == null) {
             return "redirect:/";
@@ -125,10 +126,6 @@ public class ProductoController {
         } else {
             listadoProductos = ProductoControllerUtils.obtenerListaFinal(productos, numFiltros);
             Collections.sort(listadoProductos, Comparator.comparing(Product::getCreationDate).thenComparing(Product::getCreationTime).reversed());
-            //TODO delete Product p
-            Product p;
-
-
         }
 
         request.setAttribute("listaKeywords", listaKeyword);
@@ -304,28 +301,6 @@ public class ProductoController {
         List<String> keywordList = keywordRepository.findAllName();
         List<Keyword> keyWords = new ArrayList<>();
 
-//        for (String words : keywords) {
-//            Keyword key;
-//            if (!keywordList.contains(words)) {
-//                key = new Keyword();
-//                key.setName(words);
-//                keywordRepository.save(key);
-//            } else {
-//                key = keywordRepository.findByName(words).get(0);
-//            }
-//
-//            keyWords.add(key);
-//
-//        }
-
-//        List<ProductKeyword> productKeywords = new ArrayList<>();
-//        for(Keyword k : keyWords){
-//            ProductKeyword pk = new ProductKeyword();
-//            pk.setKeywordByKeywordId(k);
-//            pk.setProductByProductId(product);
-//            productKeywords.add(pk);
-//        }
-//        product.setProductKeywordsByProductId(productKeywords);
         product.setTitle(titulo);
         product.setDescription(descripcion);
         product.setPrice(Double.parseDouble(precio));
@@ -347,8 +322,6 @@ public class ProductoController {
         } catch (ParseException ex) {
             //TODO log
         }
-
-        HttpStatus.
         productRepository.save(product);
 
         return "redirect:/misproductos";
