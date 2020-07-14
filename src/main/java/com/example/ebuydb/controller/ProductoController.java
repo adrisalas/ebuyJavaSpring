@@ -238,13 +238,13 @@ public class ProductoController {
         if (usuario == null || usuario.getIsadmin() == 1) {
             return "redirect:/";
         }
-        String productoId = request.getParameter("productoId");
+        String productId = request.getParameter("productId");
 
-        if(productoId == null || productoId == ""){
-            return "redirect/misproductos";
+        if(productId == null || productId == ""){
+            return "redirect:/misproductos";
         }
 
-        Product producto = productRepository.findById(Integer.valueOf(productoId)).get();
+        Product producto = productRepository.findById(Integer.valueOf(productId)).get();
         List<Subcategory> listSubcategory = subcategoryRepository.findAll();
         List<Category> listCategory = categoryRepository.findAll();
         List<Keyword> listKeyword = keywordRepository.findAll();
@@ -304,28 +304,28 @@ public class ProductoController {
         List<String> keywordList = keywordRepository.findAllName();
         List<Keyword> keyWords = new ArrayList<>();
 
-        for (String words : keywords) {
-            Keyword key;
-            if (!keywordList.contains(words)) {
-                key = new Keyword();
-                key.setName(words);
-                keywordRepository.save(key);
-            } else {
-                key = keywordRepository.findByName(words).get(0);
-            }
+//        for (String words : keywords) {
+//            Keyword key;
+//            if (!keywordList.contains(words)) {
+//                key = new Keyword();
+//                key.setName(words);
+//                keywordRepository.save(key);
+//            } else {
+//                key = keywordRepository.findByName(words).get(0);
+//            }
+//
+//            keyWords.add(key);
+//
+//        }
 
-            keyWords.add(key);
-
-        }
-
-        List<ProductKeyword> productKeywords = new ArrayList<>();
-        for(Keyword k : keyWords){
-            ProductKeyword pk = new ProductKeyword();
-            pk.setKeywordByKeywordId(k);
-            pk.setProductByProductId(product);
-            productKeywords.add(pk);
-        }
-        product.setProductKeywordsByProductId(productKeywords);
+//        List<ProductKeyword> productKeywords = new ArrayList<>();
+//        for(Keyword k : keyWords){
+//            ProductKeyword pk = new ProductKeyword();
+//            pk.setKeywordByKeywordId(k);
+//            pk.setProductByProductId(product);
+//            productKeywords.add(pk);
+//        }
+//        product.setProductKeywordsByProductId(productKeywords);
         product.setTitle(titulo);
         product.setDescription(descripcion);
         product.setPrice(Double.parseDouble(precio));
@@ -343,11 +343,12 @@ public class ProductoController {
         String hora = new SimpleDateFormat("HH:mm").format(time);
         hora += ":00";
         try {
-            product.setCreationTime((Time) new SimpleDateFormat("HH:mm:ss").parse(hora));
+            product.setCreationTime( new Time(new SimpleDateFormat("HH:mm:ss").parse(hora).getTime()));
         } catch (ParseException ex) {
             //TODO log
         }
 
+        HttpStatus.
         productRepository.save(product);
 
         return "redirect:/misproductos";
@@ -368,7 +369,7 @@ public class ProductoController {
 
 
 
-    @PostMapping("guardarvaloracion")
+    @PostMapping("/guardarvaloracion")
     public String guardarValoracion(HttpSession session, HttpServletRequest request) throws UnsupportedEncodingException {
 
         Account usuario = (Account) session.getAttribute("user");
