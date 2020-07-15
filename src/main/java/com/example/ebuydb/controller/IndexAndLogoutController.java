@@ -1,6 +1,6 @@
 package com.example.ebuydb.controller;
 
-import com.example.ebuydb.entity.Account;
+import com.example.ebuydb.dto.AccountSessionDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +9,11 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @AllArgsConstructor
-public class NavController {
+public class IndexAndLogoutController {
 
     @GetMapping
     public String index(HttpSession session){
-        Account account = (Account) session.getAttribute("user");
+        AccountSessionDTO account = (AccountSessionDTO) session.getAttribute("user");
         if(session.getAttribute("user") != null){
             if(account.getIsadmin() == 1){
                 return "redirect:/usuarioslistar";

@@ -1,15 +1,10 @@
 package com.example.ebuydb.service;
 
 import com.example.ebuydb.dao.AccountRepository;
-import com.example.ebuydb.dto.AccountSessionDTO;
 import com.example.ebuydb.dto.AccountDTO;
 import com.example.ebuydb.entity.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 

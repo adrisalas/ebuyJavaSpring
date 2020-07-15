@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class AccountSignInDTO {
+public class AccountSignUpDTO {
 
     private String nickname;
     private String email1;

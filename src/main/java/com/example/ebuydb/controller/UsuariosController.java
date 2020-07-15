@@ -6,6 +6,7 @@ import com.example.ebuydb.dto.AccountSessionDTO;
 import com.example.ebuydb.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,13 +34,13 @@ public class UsuariosController {
     }
 
     @GetMapping("/usuarioseditar")
-    public String usuariosEditar(@RequestParam("userId") String clienteId, HttpServletRequest request, HttpSession session){
+    public String usuariosEditar(@RequestParam("userId") String clienteId, Model model, HttpSession session){
         AccountSessionDTO usuario = (AccountSessionDTO) session.getAttribute("user");
         if(usuario == null || usuario.getIsadmin() == 0){
             return "redirect:/";
         }
 
-        request.setAttribute("cliente", adminService.getAccountById(clienteId));
+        model.addAttribute("cliente", adminService.getAccountById(clienteId));
 
         return "usuarioFormulario";
     }
@@ -47,7 +48,7 @@ public class UsuariosController {
     @PostMapping("/usuariosguardar")
     public String usuariosGuardar(@RequestParam("userId") String clienteId,@RequestParam("nickname") String nickname,
                                   @RequestParam("email") String email, @RequestParam("pwd") String pwd, @RequestParam(value = "isAdmin",required = false) String isadmin,
-                                  HttpSession session, HttpServletRequest request){
+                                  HttpSession session){
         AccountSessionDTO usuario = (AccountSessionDTO) session.getAttribute("user");
         if(usuario == null || usuario.getIsadmin() == 0){
             return "redirect:/";

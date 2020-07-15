@@ -35,7 +35,7 @@
         </form>
     </div>
     <div class="column">
-        <form class="login-form" method="post" onsubmit="return checkSignIn(this);" th:action="@{/signin}">
+        <form class="login-form" method="post" onsubmit="return checkSignUp(this);" th:action="@{/signup}">
             <h2 class="login-form__hdg">Registrarse</h2>
             <div class="login-form__field">
                 <div class="input-group">
@@ -58,8 +58,8 @@
                     <input class="input-group__input" type="password" placeholder=" " autocomplete="off" id="password2" name="password2"/></td>
                     <label class="input-group__label" for="password2">Repite Contrase&ntilde;a</label>
                 </div>
-                <span style="color:red;" id="signinstatus" th:text="${signinstatus}"/>
-                <span style="color:#33A8FF;" id="signinstatusok" th:text="${signinstatusok}"/>
+                <span style="color:red;" id="signinstatus" th:text="${signupstatus}"/>
+                <span style="color:#33A8FF;" id="signinstatusok" th:text="${signupstatusok}"/>
             </div>
             <input  class="login-btn" type="submit" value="Registrarse"/>
         </form>
