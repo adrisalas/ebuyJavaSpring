@@ -7,7 +7,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class Hash {
 
-    public static void printSHA256(String text){
+    public static String SHA256(String text){
+        String hex;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
@@ -15,10 +16,10 @@ public class Hash {
             md.update(text.getBytes(StandardCharsets.UTF_8));
             byte[] digest = md.digest();
 
-            String hex = String.format("%064x", new BigInteger(1, digest));
-            System.out.println(hex);
+            hex = String.format("%064x", new BigInteger(1, digest));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            hex = "Algorithm SHA-256 does not exists";
         }
+        return hex;
     }
 }

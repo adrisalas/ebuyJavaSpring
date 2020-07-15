@@ -14,28 +14,28 @@
 
 
 
-<form th:action="@{/guardarproducto}" method="post">
-    <input type="hidden" name="productId" th:value="${productId}" />
+<form th:action="@{/guardarproducto}" method="post" th:object="${product}">
+    <input type="hidden" name="productId" th:value="${product.productId}" />
     <table>
         <tr>
             <td>T&iacute;tulo:</td>
-            <td colspan="2"><input type="text" name="title" th:value="${title}" size="50" max="50" maxlength="50" /></td>
+            <td colspan="2"><input type="text" name="title" th:value="${product.title}" size="50" max="50" maxlength="50" /></td>
         </tr>
         <tr>
             <td>Descripci&oacute;n:</td>
-            <td colspan="2"><textarea name="description" th:value="${description}" th:text="${description}" rows="10" cols="50" maxlength="1020"/></td>
+            <td colspan="2"><textarea name="description" th:value="${product.description}" th:text="${product.description}" rows="10" cols="50" maxlength="1020"/></td>
         </tr>
         <tr>
             <td>Precio:</td>
-            <td colspan="2"><input type="text" name="price" th:value="${price}" size="50" max="50" maxlength="52" /></td>
+            <td colspan="2"><input type="text" name="price" th:value="${product.price}" size="50" max="50" maxlength="52" /></td>
         </tr>
         <tr>
             <td>Foto(URL):</td>
-            <td colspan="2"><input type="text" name="urlPhoto" th:value="${photoUrl}" size="50" max="50" maxlength="510" /></td>
+            <td colspan="2"><input type="text" name="urlPhoto" th:value="${product.photoUrl}" size="50" max="50" maxlength="510" /></td>
         </tr>
         <tr>
             <td>Cantidad:</td>
-            <td colspan="2"><input type="text" name="quantity" th:value="${quantity}" size="10" max="10" maxlength="10" /></td>
+            <td colspan="2"><input type="text" name="quantity" th:value="${product.quantity}" size="10" max="10" maxlength="10" /></td>
         </tr>
         <tr>
             <!--   <div class="autocomplete" style="width:300px;">-->
