@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "product_keyword", schema = "ebuydb", catalog = "")
+@Table(name = "product_keyword")
 @IdClass(ProductKeywordPK.class)
 @NoArgsConstructor
 @Getter

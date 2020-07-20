@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "purchased_product", schema = "ebuydb", catalog = "")
+@Table(name = "purchased_product")
 @NoArgsConstructor
 @Getter
 @Setter

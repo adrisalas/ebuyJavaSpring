@@ -19,6 +19,7 @@ public class Hash {
             hex = String.format("%064x", new BigInteger(1, digest));
         } catch (NoSuchAlgorithmException e) {
             hex = "Algorithm SHA-256 does not exists";
+            hex = "Algorithm SHA-256 does not exists";
         }
         return hex;
     }
